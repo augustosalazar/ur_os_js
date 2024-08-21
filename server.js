@@ -7,7 +7,6 @@ import { SJF } from './modules/SJF.js';
 import { MFQ } from './modules/MFQ.js';
 import { SystemOS } from './modules/SystemOS.js';
 import { Process } from './modules/Process.js';
-import { InterruptType } from './modules/InterruptType.js';
 
 const app = express();
 const port = 8080;
@@ -16,9 +15,11 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.json());
 
-app.get('/run-simulation', (req, res) => {
-    const algorithm = req.query.algorithm || 'fcfs';
+app.post('/run-simulation', (req, res) => {
+    const { algorithm, processes } = req.body;
+
     let scheduler;
 
     switch (algorithm.toLowerCase()) {
@@ -38,13 +39,12 @@ app.get('/run-simulation', (req, res) => {
     }
 
     const systemOS = new SystemOS();
-    const process1 = new Process(1, 5);
-    const process2 = new Process(2, 3);
 
-    systemOS.addProcess(process1);
-    systemOS.addProcess(process2);
+    processes.forEach((process, index) => {
+        const newProcess = new Process(index + 1, process.burstTime);
+        systemOS.addProcess(newProcess);
+    });
 
-    systemOS.handleInterrupt(InterruptType.TIMER);
     systemOS.run();
 
     res.json({ output: systemOS.getLogs() });

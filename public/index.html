@@ -1,20 +1,29 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Java to Web Migration</title>
+    <title>Simulación de CPU</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <h1>Simulación de CPU</h1>
-    <label for="algorithm">Selecciona el algoritmo:</label>
-    <select id="algorithm">
-        <option value="fcfs">FCFS</option>
-        <option value="roundrobin">Round Robin</option>
-        <option value="sjf">SJF</option>
-        <option value="mfq">MFQ</option>
-    </select>
+
+    <div>
+        <label for="algorithm">Selecciona el algoritmo:</label>
+        <select id="algorithm">
+            <option value="fcfs">FCFS</option>
+            <option value="roundrobin">Round Robin</option>
+            <option value="sjf">SJF</option>
+            <option value="mfq">MFQ</option>
+        </select>
+    </div>
+
+    <h2>Procesos</h2>
+    <div id="processes-container"></div>
+    <button id="add-process">Agregar Proceso</button>
+
     <button id="run-simulation">Ejecutar Simulación</button>
     <div id="output"></div>
+
     <script src="app.js"></script>
 </body>
 </html>
