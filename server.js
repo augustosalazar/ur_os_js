@@ -4,6 +4,7 @@ import { fileURLToPath } from 'url';
 import { FCFS } from './modules/FCFS.js';
 import { RoundRobin } from './modules/RoundRobin.js';
 import { SJF } from './modules/SJF.js';
+import { IOQueue } from './modules/IOQueue.js';
 import { Process } from './modules/Process.js';
 
 const app = express();
@@ -31,11 +32,16 @@ app.get('/run-simulation', (req, res) => {
             break;
     }
 
+    const ioQueue = new IOQueue();
+
     const process1 = new Process(1, 5);
     const process2 = new Process(2, 3);
 
     scheduler.addProcess(process1);
     scheduler.addProcess(process2);
+
+    ioQueue.addProcess(process1);
+    ioQueue.processIO();
 
     scheduler.schedule();
 
