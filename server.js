@@ -4,7 +4,8 @@ import { fileURLToPath } from 'url';
 import { FCFS } from './modules/FCFS.js';
 import { RoundRobin } from './modules/RoundRobin.js';
 import { SJF } from './modules/SJF.js';
-import { IOQueue } from './modules/IOQueue.js';
+import { MFQ } from './modules/MFQ.js';
+import { OS } from './modules/OS.js';
 import { Process } from './modules/Process.js';
 
 const app = express();
@@ -26,26 +27,26 @@ app.get('/run-simulation', (req, res) => {
         case 'sjf':
             scheduler = new SJF();
             break;
+        case 'mfq':
+            scheduler = new MFQ(3);  // 3 niveles de colas
+            break;
         case 'fcfs':
         default:
             scheduler = new FCFS();
             break;
     }
 
-    const ioQueue = new IOQueue();
+    const os = new OS(scheduler);
 
     const process1 = new Process(1, 5);
     const process2 = new Process(2, 3);
 
-    scheduler.addProcess(process1);
-    scheduler.addProcess(process2);
+    os.addProcess(process1);
+    os.addProcess(process2);
 
-    ioQueue.addProcess(process1);
-    ioQueue.processIO();
+    os.run();
 
-    scheduler.schedule();
-
-    res.json({ output: `Simulación completada usando ${algorithm}. Procesos ejecutados: 1 y 2.` });
+    res.json({ output: os.getLogs() });
 });
 
 app.get('/', (req, res) => {

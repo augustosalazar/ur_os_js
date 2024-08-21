@@ -7,19 +7,28 @@ export class Process {
         this.state = ProcessState.NEW;
         this.burstTime = burstTime;
         this.burstList = new ProcessBurstList();
+        this.logs = [];
+    }
+
+    log(message) {
+        this.logs.push(message);
     }
 
     run(quantum = null) {
-        console.log(`Proceso ${this.id} en estado ${this.state}`);
+        this.log(`Proceso ${this.id} en estado ${this.state}`);
         this.state = ProcessState.RUNNING;
 
         if (quantum !== null && this.burstTime > quantum) {
-            console.log(`Proceso ${this.id} ejecutándose por ${quantum} unidades de tiempo`);
+            this.log(`Proceso ${this.id} ejecutándose por ${quantum} unidades de tiempo`);
             this.burstTime -= quantum;
             this.state = ProcessState.READY;
         } else {
-            console.log(`Proceso ${this.id} completado`);
+            this.log(`Proceso ${this.id} completado`);
             this.state = ProcessState.TERMINATED;
         }
+    }
+
+    getLogs() {
+        return this.logs.join('\n');
     }
 }
