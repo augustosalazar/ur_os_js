@@ -18,19 +18,19 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.json());
 
 app.post('/run-simulation', (req, res) => {
-    const { algorithm, processes } = req.body;
+    const { algorithm, processes, quantum, mfqLevels } = req.body;
 
     let scheduler;
 
     switch (algorithm.toLowerCase()) {
         case 'roundrobin':
-            scheduler = new RoundRobin(2);  // Quantum de 2 unidades
+            scheduler = new RoundRobin(quantum);  // Usar el quantum proporcionado
             break;
         case 'sjf':
             scheduler = new SJF();
             break;
         case 'mfq':
-            scheduler = new MFQ(3);  // 3 niveles de colas
+            scheduler = new MFQ(mfqLevels);  // Usar el número de niveles proporcionado
             break;
         case 'fcfs':
         default:

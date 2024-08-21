@@ -21,8 +21,23 @@ document.getElementById('add-process').addEventListener('click', () => {
     processCounter++;
 });
 
+document.getElementById('algorithm').addEventListener('change', () => {
+    const algorithm = document.getElementById('algorithm').value;
+
+    document.getElementById('quantum-container').style.display = 'none';
+    document.getElementById('mfq-levels-container').style.display = 'none';
+
+    if (algorithm === 'roundrobin') {
+        document.getElementById('quantum-container').style.display = 'block';
+    } else if (algorithm === 'mfq') {
+        document.getElementById('mfq-levels-container').style.display = 'block';
+    }
+});
+
 document.getElementById('run-simulation').addEventListener('click', () => {
     const algorithm = document.getElementById('algorithm').value;
+    const quantum = document.getElementById('quantum').value;
+    const mfqLevels = document.getElementById('mfq-levels').value;
     const processes = [];
 
     document.querySelectorAll('.process').forEach((processDiv, index) => {
@@ -36,12 +51,19 @@ document.getElementById('run-simulation').addEventListener('click', () => {
         }
     });
 
+    const data = {
+        algorithm,
+        processes,
+        quantum: parseInt(quantum),
+        mfqLevels: parseInt(mfqLevels)
+    };
+
     fetch('/run-simulation', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ algorithm, processes })
+        body: JSON.stringify(data)
     })
     .then(response => response.json())
     .then(data => {
