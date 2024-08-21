@@ -5,8 +5,9 @@ import { FCFS } from './modules/FCFS.js';
 import { RoundRobin } from './modules/RoundRobin.js';
 import { SJF } from './modules/SJF.js';
 import { MFQ } from './modules/MFQ.js';
-import { OS } from './modules/OS.js';
+import { SystemOS } from './modules/SystemOS.js';
 import { Process } from './modules/Process.js';
+import { InterruptType } from './modules/InterruptType.js';
 
 const app = express();
 const port = 8080;
@@ -36,17 +37,17 @@ app.get('/run-simulation', (req, res) => {
             break;
     }
 
-    const os = new OS(scheduler);
-
+    const systemOS = new SystemOS();
     const process1 = new Process(1, 5);
     const process2 = new Process(2, 3);
 
-    os.addProcess(process1);
-    os.addProcess(process2);
+    systemOS.addProcess(process1);
+    systemOS.addProcess(process2);
 
-    os.run();
+    systemOS.handleInterrupt(InterruptType.TIMER);
+    systemOS.run();
 
-    res.json({ output: os.getLogs() });
+    res.json({ output: systemOS.getLogs() });
 });
 
 app.get('/', (req, res) => {
