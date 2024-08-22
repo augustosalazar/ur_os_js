@@ -41,7 +41,7 @@ app.post('/run-simulation', (req, res) => {
     const systemOS = new SystemOS();
 
     processes.forEach((process, index) => {
-        const newProcess = new Process(index + 1, process.burstTime);
+        const newProcess = new Process(index + 1, process.burstTime, process.priority);
         systemOS.addProcess(newProcess);
     });
 
