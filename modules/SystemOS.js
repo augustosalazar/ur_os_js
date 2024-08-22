@@ -1,43 +1,48 @@
-import { InterruptType } from './InterruptType.js';
+import { FCFS } from './FCFS.js';
+import { RoundRobin } from './RoundRobin.js';
+import { SJF } from './SJF.js';
+import { MFQ } from './MFQ.js';
 import { Process } from './Process.js';
 
 export class SystemOS {
     constructor() {
-        this.interruptQueue = [];
+        this.scheduler = null;
         this.processes = [];
-        this.logs = [];
     }
 
-    log(message) {
-        this.logs.push(message);
-    }
-
-    addProcess(process) {
-        this.processes.push(process);
-    }
-
-    handleInterrupt(type) {
-        this.interruptQueue.push(type);
-        this.log(`Interrupción de tipo ${type} manejada`);
-    }
-
-    run() {
-        while (this.processes.length > 0) {
-            const process = this.processes.shift();
-            process.run();
-            this.log(process.getLogs());
-            if (process.state !== 'TERMINATED') {
-                this.processes.push(process);
-            }
-
-            if (this.interruptQueue.length > 0) {
-                const interrupt = this.interruptQueue.shift();
-                this.handleInterrupt(interrupt);
-            }
+    setScheduler(schedulerType, options = {}) {
+        switch (schedulerType.toLowerCase()) {
+            case 'fcfs':
+                this.scheduler = new FCFS();
+                break;
+            case 'roundrobin':
+                this.scheduler = new RoundRobin(options.quantum || 2); // Default quantum of 2
+                break;
+            case 'sjf':
+                this.scheduler = new SJF();
+                break;
+            case 'mfq':
+                this.scheduler = new MFQ(options.levels || 3); // Default 3 levels for MFQ
+                break;
+            default:
+                throw new Error('Tipo de scheduler no soportado');
         }
     }
 
+    addProcess(id, burstTime, priority, arrivalTime = 0) {
+        const process = new Process(id, burstTime, priority, arrivalTime);
+        this.processes.push(process);
+        this.scheduler.addProcess(process);
+    }
+
+    run() {
+        if (!this.scheduler) {
+            throw new Error('No se ha establecido un scheduler');
+        }
+        this.scheduler.schedule();
+    }
+
     getLogs() {
-        return this.logs.join('\n');
+        return this.processes.map(process => process.getLogs()).join('\n\n');
     }
 }

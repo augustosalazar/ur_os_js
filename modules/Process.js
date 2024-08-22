@@ -1,50 +1,36 @@
-import { ProcessState } from './ProcessState.js';
-
 export class Process {
-    constructor(id, burstTime, priority, arrivalTime = 0) {
+    constructor(id, burstTime, priority) {
         this.id = id;
-        this.state = ProcessState.NEW;
         this.burstTime = burstTime;
         this.priority = priority;
         this.remainingTime = burstTime;
-        this.arrivalTime = arrivalTime;
-        this.startTime = null;
-        this.finishTime = null;
-        this.logs = [];
+        this.logs = []; // Array to store logs for each process
     }
 
     log(message) {
         this.logs.push(`Proceso ${this.id}: ${message}`);
-        console.log(`Proceso ${this.id}: ${message}`);
+        console.log(`Proceso ${this.id}: ${message}`); // Also log to the console for debugging
     }
 
-    run(currentTime, quantum = null) {
-        this.log(`Estado inicial: ${this.state}`);
-        this.state = ProcessState.RUNNING;
-        
-        // Establecer el tiempo de inicio si aún no ha sido definido
-        if (this.startTime === null) {
-            this.startTime = currentTime;
-        }
-
-        if (quantum !== null && this.remainingTime > quantum) {
+    run(quantum) {
+        this.log(`Estado inicial: RUNNING`);
+        if (this.remainingTime > quantum) {
             this.log(`Ejecutándose por ${quantum} unidades de tiempo`);
             this.remainingTime -= quantum;
             this.log(`Tiempo restante: ${this.remainingTime}`);
-            this.state = ProcessState.READY;
-            this.log(`Cambio de estado a: ${this.state}`);
+            this.log(`Cambio de estado a: READY`);
         } else {
             this.log(`Ejecutándose por ${this.remainingTime} unidades de tiempo`);
-            currentTime += this.remainingTime;
             this.remainingTime = 0;
-            this.finishTime = currentTime;
-            this.state = ProcessState.TERMINATED;
-            this.log(`Proceso completado y cambio de estado a: ${this.state}`);
-            this.log(`Tiempo de inicio: ${this.startTime}, Tiempo de finalización: ${this.finishTime}`);
+            this.log(`Proceso completado y cambio de estado a: TERMINATED`);
         }
     }
 
+    getRemainingTime() {
+        return this.remainingTime;
+    }
+
     getLogs() {
-        return this.logs.join('\n');
+        return this.logs.join('\n'); // Join all log entries into a single string
     }
 }

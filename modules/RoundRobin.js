@@ -3,27 +3,20 @@ import { Scheduler } from './Scheduler.js';
 export class RoundRobin extends Scheduler {
     constructor(quantum) {
         super();
-        this.quantum = quantum;
+        this.quantum = quantum; // Set the quantum time slice for the scheduler
     }
 
     schedule() {
         let currentTime = 0;
-
-        console.log(`Round Robin: Quantum = ${this.quantum}`);
         while (this.queue.length > 0) {
-            const process = this.queue.shift();
-            currentTime = Math.max(currentTime, process.arrivalTime);
-            console.log(`Round Robin: Ejecutando Proceso ${process.id} con tiempo restante ${process.remainingTime} a tiempo ${currentTime}`);
-            process.run(currentTime, this.quantum);
-
-            if (process.state !== 'TERMINATED') {
-                this.queue.push(process);
-                console.log(`Round Robin: Proceso ${process.id} no completado, se reprograma`);
-                currentTime += this.quantum;
-            } else {
-                currentTime = process.finishTime;
-                console.log(`Round Robin: Proceso ${process.id} completado a tiempo ${currentTime}`);
+            const process = this.queue.shift(); // Remove the first process in the queue
+            console.log(`Ejecutando Proceso ${process.id} a tiempo ${currentTime}`); // Log the current execution
+            process.run(this.quantum); // Run the process with the specified quantum
+            if (process.getRemainingTime() > 0) {
+                this.queue.push(process); // Re-add process to the queue if it’s not finished
+                console.log(`Proceso ${process.id} no completado, se reprograma`); // Log that the process is requeued
             }
+            currentTime += this.quantum; // Advance the current time by the quantum
         }
     }
 }

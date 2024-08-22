@@ -4,7 +4,7 @@ export class SJF extends Scheduler {
     schedule() {
         let currentTime = 0;
 
-        // Ordenar por tiempo de ráfaga (Shortest Job First)
+        // Sort by burst time (Shortest Job First)
         this.queue.sort((a, b) => a.burstTime - b.burstTime);
         console.log('SJF: Orden de ejecución según burst time:', this.queue.map(p => `Proceso ${p.id}: ${p.burstTime}`));
 
